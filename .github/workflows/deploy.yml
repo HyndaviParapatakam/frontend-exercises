@@ -7,7 +7,6 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-
     env:
       IMAGE_NAME: hyndav/frontend-exercises
       TAG: latest
@@ -32,17 +31,17 @@ jobs:
 
       - name: Set up Kubectl
         uses: azure/setup-kubectl@v3
-        with:
-          version: 'latest'
 
-      - name: Set Kubeconfig
+      - name: Configure Kubernetes Access
         run: |
           mkdir -p ~/.kube
-          echo "${{ secrets.KUBE_CONFIG_DATA }}" | base64 -d > ~/.kube/config
+          echo "${{ secrets.KUBE_CONFIG_RAW }}" > ~/.kube/config
           chmod 600 ~/.kube/config
+          kubectl config view --minify
 
-      - name: Helm Upgrade
+      - name: Deploy with Helm
         run: |
-          helm upgrade --install frontend-exercises ../../helm-deployment/frontend-exercises-helm \
+          helm upgrade --install frontend-exercises ./helm-deployment \
+            --set image.repository=$IMAGE_NAME \
             --set image.tag=$TAG \
-            --set dummy=$(date +%s)
+            --atomic --cleanup-on-fail
