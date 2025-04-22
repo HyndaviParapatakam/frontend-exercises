@@ -1,20 +1,14 @@
-# Stage 1: Build the frontend
-FROM node:lts-slim AS builder
-
+# Stage 1: Build
+FROM node:18 as builder
 WORKDIR /app
+COPY package*.json ./
+RUN npm ci
 COPY . .
+RUN npm run build
 
-# Install dependencies and build
-RUN npm install && npm run build
-
-# Stage 2: Use secure base to serve app
-FROM nginx:stable-alpine
-
-# Clean default NGINX
-RUN rm -rf /usr/share/nginx/html/*
-
+# Stage 2: Run
+FROM nginx:alpine
 COPY --from=builder /app/build /usr/share/nginx/html
 COPY nginx.conf /etc/nginx/conf.d/default.conf
-
 EXPOSE 80
 CMD ["nginx", "-g", "daemon off;"]
