@@ -27,7 +27,7 @@ jobs:
 
       - name: Build and Push Docker Image
         run: |
-          docker build -t $IMAGE_NAME:$TAG .
+          docker build -t $IMAGE_NAME:$TAG ./frontend-exercises
           docker push $IMAGE_NAME:$TAG
 
       - name: Set up Kubectl
