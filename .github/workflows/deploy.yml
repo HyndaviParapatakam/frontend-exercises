@@ -37,8 +37,9 @@ jobs:
 
       - name: Set Kubeconfig
         run: |
-          echo "${{ secrets.KUBE_CONFIG_DATA }}" | base64 -d > kubeconfig
-          echo "KUBECONFIG=$PWD/kubeconfig" >> $GITHUB_ENV
+          mkdir -p ~/.kube
+          echo "${{ secrets.KUBE_CONFIG_DATA }}" | base64 -d > ~/.kube/config
+          chmod 600 ~/.kube/config
 
       - name: Helm Upgrade
         run: |
