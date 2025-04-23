@@ -51,10 +51,7 @@ const ExercisesApp = () => {
         <VirtualizedListWithBoundary />
       
       </Paper>
-
-      {/* More exercises can go here */}
     </Container>
-  // <div><h3>Remote App Loaded (Test OK)</h3></div>
   );
 }
 
