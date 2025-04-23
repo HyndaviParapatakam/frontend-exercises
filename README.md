@@ -1,46 +1,120 @@
-# Getting Started with Create React App
+# Frontend Micro-Frontend Project with Helm & AWS EKS Deployment
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+This repository contains a complete micro-frontend-based architecture implemented using React (shell-app and frontend-exercises), with deployment pipelines configured using GitHub Actions, Docker, Helm, and AWS EKS.
 
-## Available Scripts
+---
 
-In the project directory, you can run:
+## 📁 Folder Structure
 
-### `npm start`
+```
+Coding_test_React/
+│
+├── frontend-repos/
+│   ├── shell-app/                  # Shell container (host) for micro frontends with SSR
+│   └── frontend-exercises/        # React micro-frontend exposed via Module Federation
+│
+├── helm-deployment/
+│   ├── shell-app-helm/            # Helm chart for shell-app deployment
+│   └── frontend-exercises-helm/   # Helm chart for frontend-exercises deployment
+```
 
-Runs the app in the development mode.\
+---
+
+## 🛠️ Features
+
+- **Micro-Frontend Architecture** using Webpack Module Federation
+- **SSR** support in shell-app
+- **Dynamic routing & lazy loading**
+- **Helm post-upgrade hooks** for S3 uploads and CDN cache busting
+- **GitHub Actions** for CI/CD
+- **AWS EKS** for hosting with LoadBalancer support
+
+---
+
+## How to Run Locally
+
+### 1. Shell App
+
+```bash
+cd frontend-repos/shell-app
+npm install
+npm run dev             # For CSR
+npm run build           # Build SSR bundle
+npm run start:ssr       # Start SSR server
+```
+Open [http://localhost:4000](http://localhost:4000) to view it in the browser.
+
+### 2. Frontend Exercises App
+
+```bash
+cd frontend-repos/frontend-exercises
+npm install
+npm start               # Start dev server
+```
 Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+---
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+## ☁️ Deploy to AWS EKS
 
-### `npm test`
+1. Configure `KUBE_CONFIG_DATA`, `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `DOCKER_USERNAME`, `DOCKER_PASSWORD`, `S3_BUCKET`, and `CLOUDFRONT_DIST_ID` in GitHub secrets.
+2. Push changes to `main` branch to trigger GitHub Actions workflows.
+3. Helm charts automatically deploy updated services to AWS.
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+---
 
-### `npm run build`
+## 📦 Helm Chart Configuration
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+Each chart has the following structure:
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+```
+helm-deployment/
+  └── <app-name>-helm/
+      ├── templates/
+      ├── values.yaml
+      └── Chart.yaml
+```
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+Key `values.yaml` fields:
 
-### `npm run eject`
+```yaml
+service:
+  enabled: true
+  type: LoadBalancer
+  port: 80
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+image:
+  repository: hyndav/<app-name>
+  tag: latest
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+aws:
+  secretName: aws-credentials
+  configMapName: s3-config
+```
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+---
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+## ✅ Completed Exercises
 
-## Learn More
+✅ JavaScript & TypeScript  
+✅ React Custom Hooks, Memoization, Virtualization  
+✅ Micro-Frontend Architecture  
+✅ SSR + Lazy Loading  
+✅ Helm Chart Deployment  
+✅ CI/CD with GitHub Actions  
+✅ AWS EKS Deployment with LoadBalancer
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+---
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+## Screenshots
+
+Include screenshots inside a `/screenshots` folder if needed.
+
+---
+
+## 👩‍💻 Author
+
+**Hyndavi Reddy Parapatakam**  
+Senior Frontend Engineer | React | Angular | Helm | AWS | Micro-Frontends  
+p.hyndavireddy@gmail.com
+
+---
