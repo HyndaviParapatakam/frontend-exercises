@@ -12,8 +12,17 @@ jobs:
       TAG: latest
 
     steps:
-      - name: Checkout Code
+      - name: Checkout App Code
         uses: actions/checkout@v3
+        with:
+          path: frontend-exercises
+
+      - name: Checkout Helm Charts
+        uses: actions/checkout@v3
+        with:
+          repository: HyndaviParapatakam/frontend-exercises-helm
+          token: ${{ secrets.GITHUB_TOKEN }}
+          path: frontend-exercises-helm
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
@@ -26,22 +35,29 @@ jobs:
 
       - name: Build and Push Docker Image
         run: |
-          docker build -t $IMAGE_NAME:$TAG -f Dockerfile .
+          docker build -t $IMAGE_NAME:$TAG -f frontend-exercises/Dockerfile frontend-exercises
           docker push $IMAGE_NAME:$TAG
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
 
       - name: Set up Kubectl
         uses: azure/setup-kubectl@v3
+        with:
+          version: 'latest'
 
-      - name: Configure Kubernetes Access
+      - name: Set Kubeconfig
         run: |
-          mkdir -p ~/.kube
-          echo "${{ secrets.KUBE_CONFIG_DATA }}" | base64 -d > ~/.kube/config
-          chmod 600 ~/.kube/config
-          kubectl config view --minify
+          echo "${{ secrets.KUBE_CONFIG_DATA }}" | base64 -d > kubeconfig
+          echo "KUBECONFIG=$PWD/kubeconfig" >> $GITHUB_ENV
 
-      - name: Deploy with Helm
+      - name: Deploy via Helm
         run: |
-          helm upgrade --install frontend-exercises ./helm-deployment \
+          helm upgrade --install frontend-exercises frontend-exercises-helm \
             --set image.repository=$IMAGE_NAME \
             --set image.tag=$TAG \
             --atomic --cleanup-on-fail
