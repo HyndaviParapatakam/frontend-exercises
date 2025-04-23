@@ -39,14 +39,14 @@ const ExercisesApp = () => {
 
       <Paper elevation={3} sx={{ p: 3, mb: 4 }}>
         <Typography variant="h6" gutterBottom>
-          3.2 Custom Hooks & useMemo/useCallback
+          3.1 Custom Hooks & useMemo/useCallback
         </Typography>
         <FetchWithCacheDemo />
       </Paper>
 
       <Paper elevation={3} sx={{ p: 3, mb: 4 }}>
         <Typography variant="h6" gutterBottom>
-        3.2 Performance Optimization & Virtualized Lists
+        3.2 Performance Optimization & Virtualized Lists and 3.3 Higher-Order Components(HoC)
         </Typography>
         <VirtualizedListWithBoundary />
       
